@@ -19,14 +19,14 @@ class GammaDetection:
         return self.img
 
     def getSubtractImage(self, img_blackout):
-        self.setSubtractImage(self, img_blackout)
+        self.setSubtractImage(img_blackout)
         return self.subimg
 
-    def getHistSelectedImage(self, figure):
-        self.getHist(self.img, figure)
+    def getHistSelectedImage(self, figure, figure_text="Histogram"):
+        self.getHist(self.img, figure, figure_text)
 
-    def getHistSubtractImage(self, figure):
-        self.getHist(self.subimg, figure)
+    def getHistSubtractImage(self, figure, figure_text="Histogram"):
+        self.getHist(self.subimg, figure, figure_text)
 
     def getListImage(self, show=False):
         image_list = []
@@ -39,9 +39,11 @@ class GammaDetection:
             print(filename)
         return image_list
 
-    def getImage(self):
+    def getImage(self, index=None):
+        if index is None:
+            index = self.index
         image_list = self.getListImage()
-        return image_list[self.index]
+        return image_list[index]
 
     def setSubtractImage(self, img_blackout):
         self.subimg = ImageChops.subtract(self.img,img_blackout)
@@ -52,7 +54,7 @@ class GammaDetection:
         n, bins, patches = plt.hist(np.array(img).ravel(), bins=256, range=(0.0, 255.0), fc='k', ec='k')
         plt.setp(patches, 'facecolor', color, 'alpha', 0.75)
 
-    def getHist(self, img, figure):
+    def getHist(self, img, figure, figure_text=""):
         r_img, g_img, b_img = img.split()
         plt.ion()
         plt.figure(figure)
@@ -64,10 +66,12 @@ class GammaDetection:
         plt.subplot(313)
         self.getHistPlotChannel(b_img, "Bins", "$B$ channel", "b")
         plt.show()
-        raw_input('Figure '+ str(figure) +'. Press Enter to continue...')
+        raw_input(figure_text + '. Figure '+ str(figure) +'. Press Enter to continue...')
 
-    def setZeroChannel(self, channel_index):
-        r_img, g_img, b_img = self.img.split()
+    def setZeroChannel(self, channel_index, img = None):
+        if img is None:
+            img = self.img
+        r_img, g_img, b_img = img.split()
         if channel_index == 0:
             r_img = Image.new('L', r_img.size)
         elif channel_index == 1:
@@ -77,8 +81,10 @@ class GammaDetection:
         im = Image.merge("RGB", (r_img, g_img, b_img))
         return im
 
-    def showRGBChannel(self, channel_index):
-        r_img, g_img, b_img = self.img.split()
+    def showRGBChannel(self, channel_index, img = None):
+        if img is None:
+            img = self.img
+        r_img, g_img, b_img = img.split()
         if channel_index == 0:
             r_img.show(title="R")
         elif channel_index == 1:
