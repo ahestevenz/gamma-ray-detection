@@ -12,10 +12,13 @@ blackout = GammaDetection(path_blackout, image_index) # Object without radioacti
 
 img_src = source.getSelectedImage()# Image from essay with sources
 img_blk = blackout.getSelectedImage()# Image from essay without sources
-
-source.getHistSelectedImage(1)# Histogram of image with sources
-blackout.getHistSelectedImage(2)# Histogram of image in blackout (a lot of noise)
+img_src.show()
 
 # A way to reduce the camera noise
-source.setSubtractImage(img_blk)# Differences between image with the radioactive source and blackout
-source.getHistSubtractImage(3)# Histogram of the difference image
+img_diff = source.getSubtractImage(img_blk)
+img_diff.show()
+
+# Histograms
+source.getHistSelectedImage(1, "Histogram of image with sources")# Histogram of image with sources
+blackout.getHistSelectedImage(2, "Histogram of image in blackout")# Histogram of image in blackout (a lot of noise)
+source.getHistSubtractImage(3, "Histogram of the difference image")# Histogram of the difference image
