@@ -92,3 +92,10 @@ class ImageProcessing:
             g_img.show(title="G")
         elif channel_index == 2:
             b_img.show(title="B")
+
+    def auto_canny(self, image, sigma=0.33):
+        v = np.median(image)
+        lower = int(max(0, (1.0 - sigma) * v))
+        upper = int(min(255, (1.0 + sigma) * v))
+        edged = cv2.Canny(image, lower, upper)
+        return edged
