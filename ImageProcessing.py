@@ -93,9 +93,17 @@ class ImageProcessing:
         elif channel_index == 2:
             b_img.show(title="B")
 
-    def auto_canny(self, image, sigma=0.33):
-        v = np.median(image)
-        lower = int(max(0, (1.0 - sigma) * v))
-        upper = int(min(255, (1.0 + sigma) * v))
-        edged = cv2.Canny(image, lower, upper)
+    def autoCannyDetector(self, image, th_factor=3):
+        if len(image.shape)==3:
+            print 'Color image: Converting to gray ...'
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        im_median = cv2.medianBlur(image, 3)
+        th, bw = cv2.threshold(im_median, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
+        th_min=th*th_factor # Empirical value
+        th_max=th_min*1.3 # The max value is about 30% of the min value (test)
+        edged = cv2.Canny(im_median, th_min, th_max, True)
         return edged
+
+    def convertPILtoCV(self, image):
+        image_ocv=cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        return image_ocv
