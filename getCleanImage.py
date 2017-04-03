@@ -4,7 +4,7 @@ import argparse
 
 # Args parser
 ap = argparse.ArgumentParser()
-ap.add_argument("-c", "--source", required=True,
+ap.add_argument("-r", "--radioactive-source", required=True,
 	help="path to essay directory of images acquire with radioactive sources")
 ap.add_argument("-b", "--background", required=True,
 	help="path to essay directory of images acquire in background")
@@ -15,7 +15,7 @@ ap.add_argument("-s", "--show", default=False, type=bool,
 args = vars(ap.parse_args())
 
 # Variables
-path_source=args["source"] # Path to the essay directory with the radioactive sources (images)
+path_source=args["radioactive-source"] # Path to the essay directory with the radioactive sources (images)
 path_blackout=args["background"] # Path to the essay directory without the radioactive sources (images), the acquisition was in blackout
 image_index=args["index"] # Image index for the image processing in the essay directory
 show = args["show"] # Show images
@@ -38,10 +38,10 @@ if show==True:
     source.getHistSubtractImage(3, "Histogram of the difference image")# Histogram of the difference image
 
 # Without R channel
-img_diff_r_0 = source.setZeroChannel(0,img_diff) # deletes R channel
-img_diff_r_0_ocv = source.convertPILtoCV(img_diff_r_0) # to OpenCV
+img_diff_clean = source.setZeroChannel(0,img_diff) # deletes R channel
+img_diff_clean_ocv = source.convertPILtoCV(img_diff_clean) # to OpenCV
 
 if show==True:
     cv2.namedWindow('Image difference (without red channel)', cv2.WINDOW_NORMAL)
-    cv2.imshow('Image difference (without red channel)', img_diff_r_0_ocv)
+    cv2.imshow('Image difference (without red channel)', img_diff_clean_ocv)
     cv2.waitKey(0)
