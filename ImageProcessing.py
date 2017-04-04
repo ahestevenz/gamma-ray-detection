@@ -93,17 +93,31 @@ class ImageProcessing:
         elif channel_index == 2:
             b_img.show(title="B")
 
-    def autoCannyDetector(self, image, th_factor=3):
+    def autoCannyDetector(self, image, th_factor=3, SigmaColor=15, diag_factor=0.1):
         if len(image.shape)==3:
             print 'Color image: Converting to gray ...'
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        im_median = cv2.medianBlur(image, 3)
-        th, bw = cv2.threshold(im_median, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
-        th_min=th*th_factor # Empirical value
-        th_max=th_min*1.3 # The max value is about 30% of the min value (test)
-        edged = cv2.Canny(im_median, th_min, th_max, True)
+        h, w = image.shape
+        diag = np.sqrt(h**2 + w**2)
+        SigmaSpace = diag_factor*diag
+        im_bilateral = cv2.bilateralFilter(image, -1, SigmaColor, SigmaSpace) # Paper: Bilateral Filtering for Gray and Color Images
+        th, bw = cv2.threshold(im_bilateral, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
+        th_min=th*th_factor # 3 is an empirical value
+        th_max=th_min*1.1 # The max value is about 10% of the min value (test)
+        edged = cv2.Canny(im_bilateral, th_min, th_max, True)
         return edged
 
     def convertPILtoCV(self, image):
         image_ocv=cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
         return image_ocv
+
+    def openMorphEdgeImage(self, edges):
+        kernel = np.ones((5,5),np.uint8)
+        edges_median = cv2.medianBlur(edges, 3)
+        edges_dilation = cv2.dilate(edges_median, kernel)
+        edge_opening = cv2.morphologyEx(edges_dilation, cv2.MORPH_OPEN, kernel)
+        return edges_dilation
+
+    def findContours(self, edges):
+        im2, contours, hierarchy = cv2.findContours(edges,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        return im2, contours, hierarchy
