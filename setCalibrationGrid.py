@@ -14,7 +14,7 @@ ap.add_argument("-b", "--background", required=True,
 	help="path to directory of images acquire in background")
 ap.add_argument("-i", "--index", required=True, default=0, type=int,
 	help="image index for the image processing in the directory")
-ap.add_argument("-f", "--file_calib", default="./config.calib", type=str,
+ap.add_argument("-f", "--file_calib", default="./conf/config.calib", type=str,
 	help="calibration file location")
 ap.add_argument("-s", "--show", default=False, type=bool,
 	help="show graphics")
