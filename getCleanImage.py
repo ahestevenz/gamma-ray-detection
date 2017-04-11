@@ -10,7 +10,7 @@ ap.add_argument("-b", "--background", required=True,
 	help="path to essay directory of images acquire in background")
 ap.add_argument("-i", "--index", required=True, type=int,
 	help="image index for the image processing in the essay directory")
-ap.add_argument("-f", "--file_calib", default="./config.calib", type=str,
+ap.add_argument("-f", "--file_calib", default="./conf/config.calib", type=str,
 	help="calibration file location")
 ap.add_argument("-s", "--show", default=False, type=bool,
 	help="show graphics")
