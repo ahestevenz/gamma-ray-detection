@@ -9,23 +9,38 @@ import numpy as np
 ### Args parser
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--directory", required=True,
-	help="path to directory of images acquire with calibration set")
+				help="path to directory of images acquire with calibration set")
 ap.add_argument("-b", "--background", required=True,
-	help="path to directory of images acquire in background")
+				help="path to directory of images acquire in background")
 ap.add_argument("-i", "--index", required=True, default=0, type=int,
-	help="image index for the image processing in the directory")
+				help="image index for the image processing in the directory")
 ap.add_argument("-f", "--file_calib", default="./conf/config.calib", type=str,
-	help="calibration file location")
-ap.add_argument("-s", "--show", default=False, type=bool,
-	help="show graphics")
+				help="calibration file location")
+ap.add_argument("-s", "--show", action='store_true',
+    			help="show graphics")
+ap.add_argument("-v", "--verbose", action='store_true',
+				help="verbose mode")
+ap.add_argument("-w", "--write_images", action='store_true',
+				help="save images")
 args = vars(ap.parse_args())
 
 ### Variables
+show = False
+verbose = False
+write = False
 path_images=args["directory"] # Path to directory of images acquire with calibration set
 path_blackout=args["background"] # Path to the directory without the radioactive sources or LED (images), the acquisition was in blackout
 image_index=args["index"] # Image index for the image processing in the directory
-show = args["show"] # Show images
+if args["show"] is not None:
+        show=True # Show images
+if args["verbose"] is not None:
+        verbose=True # Verbose mode
+if args["write_images"] is not None:
+        write=True # Save images
 file_calib_location = args["file_calib"] # Calibration file location
+img_location = "./img" # Calibration file location
+if not os.path.exists(img_location):
+	os.mkdir(img_location)
 if os.path.exists(file_calib_location):
     print "File exists. Backing up ..." # Warning: File exists, so I backed up, just in case!
     copyfile(file_calib_location, file_calib_location+'.previous')
@@ -52,22 +67,15 @@ if show==True:
 img_diff_clean = source.setZeroChannel(2,img_diff) # deletes B channel
 img_diff_ocv_canny = source.convertPILtoCV2(img_diff_clean) # to OpenCV
 img_diff_ocv_thr = source.convertPILtoCV2(img_diff_clean) # to OpenCV
+img_diff_ocv_grid = source.convertPILtoCV2(img_diff_clean) # to OpenCV
+img_diff_ocv_contour = source.convertPILtoCV2(img_diff_clean) # to OpenCV
 canny, thr = source.autoEdgeDetector(img_diff_ocv_canny) # edges
 mask = np.zeros(canny.shape, np.uint8) # black mask
 
 # Find Contours
-image_canny, contours_canny = source.findContours(canny)
-contours_canny = sorted(contours_canny, key = cv2.contourArea, reverse = True)[:10]
-image_thr, contours_thr = source.findContours(thr)
-contours_thr = sorted(contours_thr, key = cv2.contourArea, reverse = True)[:10]
-
-x_c, y_c, width_c, height_c = cv2.boundingRect(contours_canny[0]) # Canny
-x_t, y_t, width_t, height_t = cv2.boundingRect(contours_thr[0]) # Threshold
-cv2.rectangle(img_diff_ocv_canny, (x_c, y_c), (x_c + width_c, y_c + height_c), (0,0,255), 2)
-cv2.rectangle(img_diff_ocv_thr, (x_t, y_t), (x_t + width_t, y_t + height_t), (0,0,255), 2)
-
-cv2.drawContours(img_diff_ocv_canny, contours_canny, -1, (0, 255, 0), 8)
-cv2.drawContours(img_diff_ocv_thr, contours_thr, -1, (0, 255, 0), 8)
+image_canny, img_diff_ocv_canny, contours_canny, x_c, y_c, width_c, height_c = source.getSquareCoordinates(canny, img_diff_ocv_canny) # Canny
+image_thr, img_diff_ocv_thr, contours_thr, x_t, y_t, width_t, height_t = source.getSquareCoordinates(thr, img_diff_ocv_thr) # Threshold
+angle, line = source.getRotationAngle(image_canny) # Only with Canny
 
 canny_ratio=float(width_c)/float(height_c)
 canny_area=float(width_c)*float(height_c)
@@ -75,30 +83,69 @@ thr_ratio=float(width_t)/float(height_t)
 thr_area=float(width_t)*float(height_t)
 
 if min(canny_ratio,thr_ratio, key=lambda x:abs(x-1))==thr_ratio:
-    print "Threshold detects a square"
-    coor=x_t, y_t, width_t, height_t
+    print "\nThreshold detects a square"
+    x = x_t
+    y = y_t
+    width = width_t
+    height = height_t
     if canny_area > thr_area:
         warnings.warn("Warning: The area of detected ROI from Canny is greater than Threshold. Check this please!")
 else:
-    print "Canny detects a square"
-    coor=x_c, y_c, width_c, height_c
+    print "\nCanny detects a square"
+    x = x_c
+    y = y_c
+    width = width_c
+    height = height_c
     if thr_area > canny_area:
         warnings.warn("Warning: The area of detected ROI from Threshold is greater than Canny. Check this please!")
 
+x, y, width, height = source.makeCorrectionGrid(x, y, width, height) # I make 1.5% less than the original in y-axis (test)
+coor = x, y, width, height
+
+# Write ROI coordinates
 file_calib.write(str(coor)+'\n')
 file_calib.close()
+file_calib = open(file_calib_location, 'a')
+file_calib.write(str(angle)+'\n')
+file_calib.close()
 
-if show==True:
-    print "Canny Detector shapes\n| x | y | width | height |"
+source.makeGrid(x, y, width, height, img_diff_ocv_grid)
+img_diff_ocv_angle = source.rotateImage(img_diff_ocv_grid,angle)
+source.makeGrid(x, y, width, height, img_diff_ocv_angle)
+
+# Show info
+if verbose==True:
+    print "\nCanny Detector shapes\n| x | y | width | height |"
     for c in contours_canny:
-        x, y, width, height = cv2.boundingRect(c)
-        print '|',x,'|',y,'|',width,'|',height,'|'
+        xi, yi, wi, hi = cv2.boundingRect(c)
+        print '|',xi,'|',yi,'|',wi,'|',hi,'|'
     print "\nThreshold Detector shapes\n| x | y | width | height |"
     for c in contours_thr:
-        x, y, width, height = cv2.boundingRect(c)
-        print '|',x,'|',y,'|',width,'|',height,'|'
+        xi, yi, wi, hi = cv2.boundingRect(c)
+        print '|',xi,'|',yi,'|',wi,'|',hi,'|'
+    print "\nCorrected Shape \n| x | y | width | height |"
+    print '|',x,'|',y,'|',width,'|',height,'|'
+
+if write==True:
+	cv2.imwrite(img_location + "/img_diff_ocv_grid.jpg", img_diff_ocv_grid);
+	cv2.imwrite(img_location + "/img_diff_ocv_angle.jpg", img_diff_ocv_angle);
+	cv2.imwrite(img_location + "/img_diff_ocv_canny_mask.jpg", img_diff_ocv_canny);
+	cv2.imwrite(img_location + "/img_diff_ocv_thr_mask.jpg", img_diff_ocv_thr);
+	cv2.imwrite(img_location + "/img_diff_ocv_grid.jpg", img_diff_ocv_grid);
+	cv2.imwrite(img_location + "/img_canny.jpg", image_canny);
+	cv2.imwrite(img_location + "/img_thr.jpg", image_thr);
+
+if show==True:
+    cv2.namedWindow('EdgeDetector: Grid', cv2.WINDOW_NORMAL)
+    cv2.imshow('EdgeDetector: Grid', img_diff_ocv_grid)
+    cv2.namedWindow('EdgeDetector: Rotate', cv2.WINDOW_NORMAL)
+    cv2.imshow('EdgeDetector: Rotate', img_diff_ocv_angle)
     cv2.namedWindow('EdgeDetector: Canny and Mask', cv2.WINDOW_NORMAL)
     cv2.namedWindow('EdgeDetector: Threshold and Mask', cv2.WINDOW_NORMAL)
     cv2.imshow('EdgeDetector: Canny and Mask', img_diff_ocv_canny)
     cv2.imshow('EdgeDetector: Threshold and Mask', img_diff_ocv_thr)
+    cv2.namedWindow('EdgeDetector: Canny', cv2.WINDOW_NORMAL)
+    cv2.namedWindow('EdgeDetector: Threshold', cv2.WINDOW_NORMAL)
+    cv2.imshow('EdgeDetector: Canny', image_canny)
+    cv2.imshow('EdgeDetector: Threshold', image_thr)
     cv2.waitKey(0)
