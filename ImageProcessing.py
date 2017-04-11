@@ -152,10 +152,12 @@ class ImageProcessing:
         contours = sorted(contours, key = cv2.contourArea, reverse = True)[:10]
         return im2, contours
 
-    def makeCorrectionGrid(self, x, y, width, height, reduction=1.5):
-        # I make 1.5% less than the original in y-axis (test)
-        y=int(y*(1+reduction/100))
-        height=int(height*(1-reduction/100))
+    def makeCorrectionGrid(self, x, y, width, height, increase_x=1.2, increase_y=3.5, reduction_w=3.1, reduction_h=4.6):
+        # I saw a few differences (default parameters) between the detected ROI and the original square in the image.
+        y=int(y*(1+increase_y/100))
+        height=int(height*(1-reduction_h/100))
+        x=int(x*(1+increase_x/100))
+        width=int(width*(1-reduction_w/100))
         return x, y, width, height
 
     def makeGrid(self, x, y, width, height, img):
