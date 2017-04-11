@@ -4,6 +4,8 @@ import os
 import argparse
 import warnings
 from shutil import copyfile
+from shutil import copytree
+from shutil import rmtree
 import numpy as np
 
 ### Args parser
@@ -38,12 +40,16 @@ if args["verbose"] is not None:
 if args["write_images"] is not None:
         write=True # Save images
 file_calib_location = args["file_calib"] # Calibration file location
-img_location = "./img" # Calibration file location
+img_location = "./images_calib" # Images location
 if not os.path.exists(img_location):
-	os.mkdir(img_location)
+    os.mkdir(img_location)
+else:
+    if os.path.exists(img_location + '_previous'):
+	    rmtree(img_location + '_previous')
+    copytree(img_location, img_location + '_previous')
 if os.path.exists(file_calib_location):
     print "File exists. Backing up ..." # Warning: File exists, so I backed up, just in case!
-    copyfile(file_calib_location, file_calib_location+'.previous')
+    copyfile(file_calib_location, file_calib_location +'.previous')
 file_calib = open(file_calib_location, 'w')
 
 ### Script
@@ -99,7 +105,7 @@ else:
     if thr_area > canny_area:
         warnings.warn("Warning: The area of detected ROI from Threshold is greater than Canny. Check this please!")
 
-x, y, width, height = source.makeCorrectionGrid(x, y, width, height) # I make 1.5% less than the original in y-axis (test)
+x, y, width, height = source.makeCorrectionGrid(x, y, width, height, 0, 0, 0, 0) # I use the original ROI detected
 coor = x, y, width, height
 
 # Write ROI coordinates
