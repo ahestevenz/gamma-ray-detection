@@ -5,6 +5,7 @@ import os
 import sys
 import warnings
 import getCleanImage
+import matplotlib.pyplot as plt
 
 # For arguments, please check getCleanImage script
 if os.path.exists(getCleanImage.file_calib_location):
@@ -17,12 +18,15 @@ else:
     print "File does not exist:", file_calib
     sys.exit()
 
-x, y, width, height = (400, 304, 516, 536)
+x, y, width, height = (404, 314, 500, 511)#(400, 304, 516, 536)
+angle = 0.0174533446603
+mat_centroids = getCleanImage.source.getSquaresValues(x, y, width, height)
 
-#getCleanImage.source.getSquaresValues(x, y, width, height)
+print mat_centroids
 
-v=getCleanImage.source.getSquareValues(400, 304, 51, 53)
 
-v_sum=np.sum(v)
+c = plt.pcolor(mat_centroids, edgecolors='k', linewidths=1)
+plt.gca().invert_yaxis()
+plt.title('thick alreve')
 
-print v_sum
+plt.show()
