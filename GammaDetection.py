@@ -13,14 +13,19 @@ class GammaDetection(ImageProcessing):
             img = self.getSubtractGrayImage()
         x_step=width/10
         y_step=height/10
+        k=0
+        mat_values=np.empty([100])
         for i in range(x,x+width-x_step,x_step):
             for j in range(y,y+height-y_step,y_step):
-                print i,j
-        return i
+                mat_values[k]=self.getSquareValue(i,j,x_step,y_step,img)
+                k+=1
+        mat_values=np.reshape(mat_values, (10, 10))
+        return mat_values
 
-    def getSquareValues(self, x, y, x_step, y_step, img=None):
+    def getSquareValue(self, x, y, x_step, y_step, img=None):
         if img is None:
             img = self.getSubtractGrayImage()
         np_img = np.array(img)
-        square = np_img[x:x+x_step,y:y+y_step]
-        return square
+        super_pixel = np_img[x:x+x_step,y:y+y_step]
+        super_pixel_value = np.sum(super_pixel)/(x_step*y_step)
+        return super_pixel_value
