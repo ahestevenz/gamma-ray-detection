@@ -56,7 +56,7 @@ class ImageProcessing:
 
     def setSubtractImage(self, img_blackout):
         self.subimg = ImageChops.subtract(self.img,img_blackout)
-        self.subgimg = self.subimg.convert('LA')
+        self.subgimg = self.subimg.convert('L')
 
     def getHistPlotChannel(self, img, xlabel, ylabel, color):
         plt.xlabel(xlabel)
@@ -106,20 +106,22 @@ class ImageProcessing:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         return image
 
-    def autoEdgeDetector(self, image, th_factor=1, SigmaColor=15, diag_factor=0.01):
+    def autoEdgeDetector(self, image, th_factor=1, SigmaColor=15, diag_factor=0.01, SigmaColorCanny=20, diag_factor_canny=0.1):
         if len(image.shape)==3:
             print 'Color image: Converting to gray ...'
             image = self.convertCV2ColortoGray(image)
         h, w = image.shape
-        diag = np.sqrt(h**2 + w**2)
-        SigmaSpace = diag_factor*diag # diag_factor=0.1 is better for Canny Detector
-        print 'Bilateral Filter: Processing ...'
-        im_bilateral = cv2.bilateralFilter(image, -1, SigmaColor, SigmaSpace) # Paper: Bilateral Filtering for Gray and Color Images
         print 'Thresholding: Processing ...'
-        th, edged_binary = cv2.threshold(im_bilateral, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
+        diag = np.sqrt(h**2 + w**2)
+        SigmaSpace = diag_factor*diag # diag_factor=0.01 is better for Threshold Detector
+        im_bilateral = cv2.bilateralFilter(image, -1, SigmaColor, SigmaSpace) # Paper: Bilateral Filtering for Gray and Color Images
+        _, edged_binary = cv2.threshold(im_bilateral, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
+        print 'Canny: Processing ...'
+        SigmaSpace = diag_factor_canny*diag # diag_factor=0.1 is better for Canny Detector
+        im_bilateral = cv2.bilateralFilter(image, -1, SigmaColorCanny, SigmaSpace) # Paper: Bilateral Filtering for Gray and Color Images
+        th, _ = cv2.threshold(im_bilateral, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
         th_min=th*th_factor # 1 is an empirical value
         th_max=th_min*1.1 # The max value is about 10% of the min value (test)
-        print 'Canny: Processing ...'
         edged = cv2.Canny(im_bilateral, th_min, th_max, True)
         return edged, edged_binary
 
@@ -139,6 +141,46 @@ class ImageProcessing:
         edge_closing = cv2.morphologyEx(edges_median, cv2.MORPH_CLOSE, kernel)
         return edges_closing
 
+    def rotateImage(self, image, angle):
+        image_center = tuple(np.array(image.shape)[:2]/2)
+        mat = cv2.getRotationMatrix2D(image_center,angle,1.0)
+        image_rot = cv2.warpAffine(image, mat, image.shape[:2],flags=cv2.INTER_LINEAR)
+        return image_rot
+
     def findContours(self, edges):
         im2, contours, hierarchy = cv2.findContours(edges,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+        contours = sorted(contours, key = cv2.contourArea, reverse = True)[:10]
         return im2, contours
+
+    def makeCorrectionGrid(self, x, y, width, height, reduction=1.5):
+        # I make 1.5% less than the original in y-axis (test)
+        y=int(y*(1+reduction/100))
+        height=int(height*(1-reduction/100))
+        return x, y, width, height
+
+    def makeGrid(self, x, y, width, height, img):
+        x_step=int(width/10)
+        y_step=int(height/10)
+        for i in range(x, x+width, x_step):
+            cv2.line(img,(i,y),(i,y+height),(255,0,0),3)
+        for j in range(y, y+height, y_step):
+            cv2.line(img,(x,j),(x+width,j),(255,0,0),3)
+
+    def getSquareCoordinates(self, img_edges, img_diff):
+        im, contours = self.findContours(img_edges)
+        x, y, width, height = cv2.boundingRect(contours[0])
+        cv2.rectangle(img_diff, (x, y), (x + width, y + height), (0,0,255), 2)
+        cv2.drawContours(img_diff, contours, -1, (0, 255, 0), 8)
+        return im, img_diff, contours, x, y, width, height
+
+    def getRotationAngle(self, img_canny):
+        # This operation has been done with Canny Detector. The results are better than Threshold detector
+        lines_canny = cv2.HoughLines(img_canny, 1, np.pi/180, 70)
+        lines_canny_p = cv2.HoughLinesP(img_canny, 1, np.pi/180, 70)
+        k=0
+        angle=lines_canny[k][0][1]
+        while ((np.pi-angle) > 0.5): # detect only horizontal lines
+            angle=lines_canny[k][0][1]
+            line=lines_canny_p[k][0]
+            k+=1
+        return np.pi-angle, line
