@@ -27,18 +27,12 @@ ap.add_argument("-w", "--write_images", action='store_true',
 args = vars(ap.parse_args())
 
 ### Variables
-show = False
-verbose = False
-write = False
 path_images=args["directory"] # Path to directory of images acquire with calibration set
 path_blackout=args["background"] # Path to the directory without the radioactive sources or LED (images), the acquisition was in blackout
 image_index=args["index"] # Image index for the image processing in the directory
-if args["show"] is not None:
-        show=True # Show images
-if args["verbose"] is not None:
-        verbose=True # Verbose mode
-if args["write_images"] is not None:
-        write=True # Save images
+show = args["show"] # Show images
+verbose = args["verbose"] # Verbose mode
+write = args["write_images"]  # Save images
 file_calib_location = args["file_calib"] # Calibration file location
 dir_conf = os.path.dirname(file_calib_location) # Configuration directory location
 img_location = "./images_calib" # Images location
