@@ -40,16 +40,23 @@ if args["verbose"] is not None:
 if args["write_images"] is not None:
         write=True # Save images
 file_calib_location = args["file_calib"] # Calibration file location
+dir_conf = os.path.dirname(file_calib_location) # Configuration directory location
 img_location = "./images_calib" # Images location
+
 if not os.path.exists(img_location):
     os.mkdir(img_location)
 else:
     if os.path.exists(img_location + '_previous'):
 	    rmtree(img_location + '_previous')
     copytree(img_location, img_location + '_previous')
+
+if not os.path.exists(dir_conf):
+    os.mkdir(dir_conf)
+
 if os.path.exists(file_calib_location):
     print "File exists. Backing up ..." # Warning: File exists, so I backed up, just in case!
     copyfile(file_calib_location, file_calib_location +'.previous')
+
 file_calib = open(file_calib_location, 'w')
 
 ### Script
