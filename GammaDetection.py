@@ -15,8 +15,8 @@ class GammaDetection(ImageProcessing):
         y_step=height/10
         k=0
         mat_values=np.empty([100])
-        for i in range(x,x+width-x_step,x_step):
-            for j in range(y,y+height-y_step,y_step):
+        for i in range(x,x+width-x_step+1,x_step):
+            for j in range(y,y+height-y_step+1,y_step):
                 mat_values[k]=self.getSquareValue(i,j,x_step,y_step,img)
                 k+=1
         mat_values=np.reshape(mat_values, (10, 10))
