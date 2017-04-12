@@ -154,18 +154,23 @@ class ImageProcessing:
 
     def makeCorrectionGrid(self, x, y, width, height, increase_x=1.2, increase_y=3.5, reduction_w=3.1, reduction_h=4.6):
         # I saw a few differences (default parameters) between the detected ROI and the original square in the image.
-        y=int(y*(1+increase_y/100))
-        height=int(height*(1-reduction_h/100))
-        x=int(x*(1+increase_x/100))
-        width=int(width*(1-reduction_w/100))
+        y=int(round(y*(1+increase_y/100)))
+        height=int(round(height*(1-reduction_h/100)))
+        x=int(round(x*(1+increase_x/100)))
+        width=int(round(width*(1-reduction_w/100)))
+        print x, y, width, height
         return x, y, width, height
 
     def makeGrid(self, x, y, width, height, img):
         x_step=int(width/10)
         y_step=int(height/10)
-        for i in range(x, x+width, x_step):
+        print x_step
+        print y_step
+        for i in range(x, x+width+1, x_step):
+            print i
             cv2.line(img,(i,y),(i,y+height),(255,0,0),3)
-        for j in range(y, y+height, y_step):
+        for j in range(y, y+height+1, y_step):
+            print j
             cv2.line(img,(x,j),(x+width,j),(255,0,0),3)
 
     def getSquareCoordinates(self, img_edges, img_diff):
