@@ -9,9 +9,11 @@ from PIL import ImageChops
 
 class ImageProcessing:
 
-    def __init__(self, path, index):
+    def __init__(self, path, index, frame=0, verbose=False):
         self.path = path
         self.index = index
+        self.verbose = verbose
+        self.frame = frame
         self.img = self.getImage()
         self.description = "Image Processing and Computer Vision python class"
         self.author = "Ariel Hernandez Estevenz"
@@ -40,19 +42,46 @@ class ImageProcessing:
     def getListImage(self, show=False):
         image_list = []
         for path_image in sorted(glob.glob(self.path+'/*.tif')): # assuming tif
-            im=Image.open(path_image)
+            try:
+                im=Image.open(path_image)
+            except IOError:
+                print "Error opening file :: "  + path_image
+                print "Application halt! "
+                sys.exit(1)
             image_list.append(im)
             filename=os.path.basename(path_image)
             if show:
                 im.show(title=filename)
-            print(filename)
+            if self.verbose==True: print(filename)
         return image_list
 
-    def getImage(self, index=None):
+    def getImageFrame(self, frame=None, img=None):
+        if img is None:
+            img = self.img
+        if frame is None:
+            frame = self.frame
+        try:
+            img.seek(frame)
+        except EOFError:
+            print "Error getting frame :: "  + str(frame)
+            print "Application halt!"
+            sys.exit(1)
+        if self.verbose==True: print "The image frame selected is: " + str(img.tell())
+        return img
+
+    def getImage(self, frame=None, index=None):
         if index is None:
             index = self.index
+        if frame is None:
+            frame = self.frame
         image_list = self.getListImage()
-        return image_list[index]
+        try:
+            im = self.getImageFrame(frame,image_list[index])
+        except IndexError as e:
+            print "Error getting image:: "  + str(e)
+            print "Application halt!"
+            sys.exit(1)
+        return im
 
     def setSubtractImage(self, img_blackout):
         self.subimg = ImageChops.subtract(self.img,img_blackout)
@@ -108,15 +137,15 @@ class ImageProcessing:
 
     def autoEdgeDetector(self, image, th_factor=1, SigmaColor=15, diag_factor=0.01, SigmaColorCanny=20, diag_factor_canny=0.1):
         if len(image.shape)==3:
-            print 'Color image: Converting to gray ...'
+            if self.verbose==True: print 'Color image: Converting to gray ...'
             image = self.convertCV2ColortoGray(image)
         h, w = image.shape
-        print 'Thresholding: Processing ...'
+        if self.verbose==True: print 'Thresholding: Processing ...'
         diag = np.sqrt(h**2 + w**2)
         SigmaSpace = diag_factor*diag # diag_factor=0.01 is better for Threshold Detector
         im_bilateral = cv2.bilateralFilter(image, -1, SigmaColor, SigmaSpace) # Paper: Bilateral Filtering for Gray and Color Images
         _, edged_binary = cv2.threshold(im_bilateral, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator
-        print 'Canny: Processing ...'
+        if self.verbose==True: print 'Canny: Processing ...'
         SigmaSpace = diag_factor_canny*diag # diag_factor=0.1 is better for Canny Detector
         im_bilateral = cv2.bilateralFilter(image, -1, SigmaColorCanny, SigmaSpace) # Paper: Bilateral Filtering for Gray and Color Images
         th, _ = cv2.threshold(im_bilateral, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU) # Paper: The Study on An Application of Otsu Method in Canny Operator

@@ -16,6 +16,8 @@ ap.add_argument("-b", "--background", required=True,
 				help="path to directory of images acquire in background")
 ap.add_argument("-i", "--index", required=True, default=0, type=int,
 				help="image index for the image processing in the directory")
+ap.add_argument("-m", "--frame", type=int, default=0,
+	            help="frame of the image selected, the default value is 0")
 ap.add_argument("-f", "--file_calib", default="./conf/config.calib", type=str,
 				help="calibration file location")
 ap.add_argument("-s", "--show", action='store_true',
@@ -34,6 +36,7 @@ show = args["show"] # Show images
 verbose = args["verbose"] # Verbose mode
 write = args["write_images"]  # Save images
 file_calib_location = args["file_calib"] # Calibration file location
+frame = args["frame"] # Frame of the image selected, the default value is 0
 dir_conf = os.path.dirname(file_calib_location) # Configuration directory location
 img_location = "./images_calib" # Images location
 
@@ -54,8 +57,8 @@ if os.path.exists(file_calib_location):
 file_calib = open(file_calib_location, 'w')
 
 ### Script
-source = GammaDetection(path_images, image_index) # Object with radioactive source
-blackout = GammaDetection(path_blackout, image_index) # Object without radioactive source
+source = GammaDetection(path_images, image_index, frame, verbose) # Object with radioactive source
+blackout = GammaDetection(path_blackout, image_index, frame, verbose) # Object without radioactive source
 
 img_src = source.getSelectedImage() # Image from essay with sources
 img_blk = blackout.getSelectedImage() # Image from essay without sources

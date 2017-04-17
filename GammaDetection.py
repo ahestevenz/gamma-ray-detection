@@ -4,8 +4,8 @@ import numpy as np
 
 class GammaDetection(ImageProcessing):
 
-    def __init__(self, path, index):
-        ImageProcessing.__init__(self, path, index)
+    def __init__(self, path, index, frame=0, verbose=False):
+        ImageProcessing.__init__(self, path, index, frame, verbose)
         self.description = "Gamma Detection class"
         self.author = "Ariel Hernandez Estevenz"
 
@@ -49,4 +49,4 @@ class GammaDetection(ImageProcessing):
         plt.colorbar()
         plt.title('SuperPixels 10x10 Matrix values')
         plt.show()
-        return mat_values   
+        return mat_values
