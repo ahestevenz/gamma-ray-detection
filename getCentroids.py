@@ -8,6 +8,8 @@ import getCleanImage
 
 # For arguments, please check getCleanImage script
 ### Variables
+img_location="images/" # Directory images
+_ , essay_name = os.path.split(getCleanImage.path_source) # Directory essay name
 if os.path.exists(getCleanImage.file_calib_location):
     try:
         file_calib = open(getCleanImage.file_calib_location, 'r')
@@ -17,6 +19,9 @@ if os.path.exists(getCleanImage.file_calib_location):
 else:
     print "File does not exist:", file_calib
     sys.exit()
+
+if not os.path.exists(img_location):
+    os.mkdir(img_location)
 
 # Getting calib parameters
 coor = file_calib.readline().rstrip('\n').translate(None,'()').split(",")
@@ -40,7 +45,8 @@ if getCleanImage.show==True:
     cv2.waitKey(0)
 
 if getCleanImage.write==True:
-    cv2.imwrite("img_diff_ocv_grid.jpg", getCleanImage.img_diff_clean_ocv_grid);
+    getCleanImage.source.makeGrid(x, y, width, height, getCleanImage.img_diff_clean_ocv_grid)
+    cv2.imwrite(img_location + "img_diff_ocv_grid_" + essay_name + ".jpg", getCleanImage.img_diff_clean_ocv_grid);
 
 mat_centroids = getCleanImage.source.getPlotSuperPixelMatrix(x, y, width, height, getCleanImage.verbose)
 
