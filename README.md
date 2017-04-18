@@ -46,8 +46,8 @@ Threshold detects a square
 Corrected Shape
 | x | y | width | height |
 | 400 | 304 | 516 | 536 |
-```
-| [![img_thr](images_calib/img_thr.jpg)]()  | [![mask](images_calib/img_diff_ocv_thr_mask.jpg)]() | [![grid](images_calib/img_diff_ocv_grid.jpg)]() |
+``` 
+| <img src="img/img_thr.jpg" width="285"/> | <img src="img/img_diff_ocv_thr_mask.jpg" width="285"/> | <img src="img/img_diff_ocv_grid.jpg" width="285"/> |
 |:---:|:---:|:---:|
 | Edge Detection | Mask | Grid |
 
@@ -85,12 +85,15 @@ optional arguments:
 
 The results of the last script is a cualitative _pcolor_ graph with the grid of superpixels as follows,
 
-| [![img_thr](images_calib/img_thr.jpg)]()  | [![mask](images_calib/img_diff_ocv_thr_mask.jpg)]() | [![grid](images_calib/img_diff_ocv_grid.jpg)]() |
-|:---:|:---:|:---:|
-| Edge Detection | Mask | Grid |
+* Essay 1
 
-| [![img_thr](images_calib/img_thr.jpg)]()  | [![mask](images_calib/img_diff_ocv_thr_mask.jpg)]() | [![grid](images_calib/img_diff_ocv_grid.jpg)]() |
-|:---:|:---:|:---:|
-| Edge Detection | Mask | Grid |
+| <img src="img/essay_1.jpg" width="560"/> | <img src="img/essay_1_results.jpg" width="800"/> | 
+|:---:|:---:|
+| Radioactive sources location | Results |
 
-#<p align="center"><img src="img/simple_register_output.png" width="750"></p>
+* Essay 2
+
+| <img src="img/essay_2.jpg" width="560"/> | <img src="img/essay_2_results.jpg" width="800"/> | 
+|:---:|:---:|
+| Radioactive sources location | Results |
+
