@@ -23,7 +23,7 @@ usage: setCalibrationGrid.py [-h] -d DIRECTORY -b BACKGROUND -i INDEX
 optional arguments:
   -h, --help            show this help message and exit
   -d DIRECTORY, --directory DIRECTORY
-                        path to directory of images acquire with calibration
+                        path to directory of images acquire with the calibration
                         set
   -b BACKGROUND, --background BACKGROUND
                         path to directory of images acquire in background
@@ -47,10 +47,9 @@ Corrected Shape
 | x | y | width | height |
 | 400 | 304 | 516 | 536 |
 ```
-
-#<p align="center"><img src="img/simple_register_output.png" width="750"></p>
-
-img_thr | img_diff_ocv_thr_mask | img_diff_ocv_grid |
+| [![img_thr](images_calib/img_thr.jpg)]()  | [![mask](images_calib/img_diff_ocv_thr_mask.jpg)]() | [![grid](images_calib/img_diff_ocv_grid.jpg)]() |
+|:---:|:---:|:---:|
+| Edge Detection | Mask | Grid |
 
 After that the calculation of the superpixel (10x10 crystals matrix) is done with the _getCentroids.py_ script. Here, images with following features are used:
 
@@ -67,7 +66,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -r RADIOACTIVE_SOURCE, --radioactive_source RADIOACTIVE_SOURCE
                         path to essay directory of images acquire with
-                        radioactive sources
+                        the radioactive sources
   -b BACKGROUND, --background BACKGROUND
                         path to essay directory of images acquire in
                         background
@@ -85,5 +84,13 @@ optional arguments:
 ### Results
 
 The results of the last script is a cualitative _pcolor_ graph with the grid of superpixels as follows,
+
+| [![img_thr](images_calib/img_thr.jpg)]()  | [![mask](images_calib/img_diff_ocv_thr_mask.jpg)]() | [![grid](images_calib/img_diff_ocv_grid.jpg)]() |
+|:---:|:---:|:---:|
+| Edge Detection | Mask | Grid |
+
+| [![img_thr](images_calib/img_thr.jpg)]()  | [![mask](images_calib/img_diff_ocv_thr_mask.jpg)]() | [![grid](images_calib/img_diff_ocv_grid.jpg)]() |
+|:---:|:---:|:---:|
+| Edge Detection | Mask | Grid |
 
 #<p align="center"><img src="img/simple_register_output.png" width="750"></p>
