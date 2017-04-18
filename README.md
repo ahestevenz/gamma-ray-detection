@@ -1,10 +1,10 @@
 ## Gamma Ray Detection
 
-**gamma-ray-detection** is a project about gamma-ray detection which detects the high energy values when a CMOS sensor and a 10x10 matrix of collimated scintillator crystals are exposed to radioactive source that emits gamma-ray beams. The camera and the scintillator are inside of a light-trap black box (gamma camera).
+**gamma-ray-detection** is a project about gamma-ray detection which detects the high energy values when a CMOS sensor and a 10x10 matrix of collimated scintillator crystals are exposed to a radioactive source that emits gamma-ray beams. The camera and the scintillator are inside of a light-trap black box (gamma camera).
 
 ### Python classes
 
-It has been developed two python classes: _ImageProcessing_ and _GammaDetection_. First one processes the features of the image (filtering, canny and segmentation) to get the calibration parameters, which determine the scintillator dimension. The second class calculates the superpixel values in the 10x10 matrix and determinates the superpixel centroid. The superpixel size depends on the focal distance lens and sensor size of the camera.
+Two python classes have been developed: _ImageProcessing_ and _GammaDetection_. First one processes the features of the image (filtering, canny and segmentation) to get the calibration parameters, which determine the scintillator dimension. The second class calculates the values of the superpixels in the 10x10 matrix and determinates the centroid. The superpixel size depends on the focal distance lens and sensor size of the camera.
 
 
 ### Python scripts
@@ -89,11 +89,13 @@ The results of the last script is a cualitative _pcolor_ graph with the grid of 
 
 | <img src="img/essay_1.jpg" width="560"/> | <img src="img/essay_1_results.jpg" width="800"/> | 
 |:---:|:---:|
-| Radioactive sources location | Results |
+| Radioactive sources location (*) | Results |
 
 * Essay 2
 
 | <img src="img/essay_2.jpg" width="560"/> | <img src="img/essay_2_results.jpg" width="800"/> | 
 |:---:|:---:|
-| Radioactive sources location | Results |
+| Radioactive sources location (*) | Results |
+
+(*) _Note: The picture appear inverted respect to the results_
 
