@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+"""Image Processing class.
+"""
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import numpy as np
@@ -6,6 +9,15 @@ import glob
 import sys, os
 from PIL import Image
 from PIL import ImageChops
+
+__author__ = "Ariel Hernandez Estevenz"
+__copyright__ = "Copyright 2017, Comision Nacional de Energia Atomica"
+__credits__ = ["Ariel Hernandez Estevenz"]
+__version__ = "0.1"
+__maintainer__ = "Ariel Hernandez Estevenz"
+__email__ = "ahernandez@cae.cnea.gov.ar, ariel.h.estevenz@ieee.org"
+__status__ = "Development"
+
 
 class ImageProcessing:
 
