@@ -1,6 +1,17 @@
+#!/usr/bin/env python
+"""Gamma Detection class.
+"""
 from ImageProcessing import ImageProcessing
 import matplotlib.pyplot as plt
 import numpy as np
+
+__author__ = "Ariel Hernandez Estevenz"
+__copyright__ = "Copyright 2017, Comision Nacional de Energia Atomica"
+__credits__ = ["Ariel Hernandez Estevenz"]
+__version__ = "0.1"
+__maintainer__ = "Ariel Hernandez Estevenz"
+__email__ = "ahernandez@cae.cnea.gov.ar, ariel.h.estevenz@ieee.org"
+__status__ = "Development"
 
 class GammaDetection(ImageProcessing):
 

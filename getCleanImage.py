@@ -1,11 +1,22 @@
+#!/usr/bin/env python
+"""Provides a filtered image for gamma-ray detection.
+"""
 from GammaDetection import GammaDetection
 import cv2
 import argparse
 
+__author__ = "Ariel Hernandez Estevenz"
+__copyright__ = "Copyright 2017, Comision Nacional de Energia Atomica"
+__credits__ = ["Ariel Hernandez Estevenz"]
+__version__ = "0.1"
+__maintainer__ = "Ariel Hernandez Estevenz"
+__email__ = "ahernandez@cae.cnea.gov.ar, ariel.h.estevenz@ieee.org"
+__status__ = "Development"
+
 ### Args parser
 ap = argparse.ArgumentParser()
 ap.add_argument("-r", "--radioactive_source", required=True,
-	            help="path to essay directory of images acquire with radioactive sources")
+	            help="path to essay directory of images acquire with the radioactive sources")
 ap.add_argument("-b", "--background", required=True,
 	            help="path to essay directory of images acquire in background")
 ap.add_argument("-i", "--index", required=True, type=int,
