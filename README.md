@@ -38,7 +38,7 @@ optional arguments:
   -w, --write_images    save images
 
 ```
-Then, the size of the scintillator crystal are obtained as follows,
+Then, the size of the scintillator crystal is obtained as follows,
 
 ```sh
 Threshold detects a square
