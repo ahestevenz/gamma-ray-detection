@@ -97,5 +97,5 @@ The results of the last script is a cualitative _pcolor_ graph with the grid of 
 |:---:|:---:|
 | Radioactive sources location (*) | Results |
 
-(*) _Note: The picture appear inverted respect to the results_
+(*) _Note: The picture appear mirrored respect to the results_
 
