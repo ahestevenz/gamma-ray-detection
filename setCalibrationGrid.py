@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Provides the calibration parameters for gamma-ray detection.
+"""Provides the calibration parameters for scintillator dimension in the camera frame.
 """
 from GammaDetection import GammaDetection
 import cv2
