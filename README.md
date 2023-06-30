@@ -8,6 +8,38 @@ Two python classes have been developed:
 * _ImageProcessing_: processes the features of the image (filtering, canny and segmentation) to get the calibration parameters, which determine the scintillator dimension.
 * _GammaDetection_: calculates the values of the superpixels in the 10x10 matrix and determinates the centroid. The superpixel size depends on the focal distance lens and sensor size of the camera.
 
+### Installation
+#### Python environment
+
+It is highly recomomended to run the training scrips inside of python environment, in case the system does not have any use the following procedure (check [Virtualenvwrapper Installation](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) for more details).
+
+```setup
+$ pip install --user virtualenvwrapper virtualenv
+```
+
+Add three lines to your shell startup file (.bashrc, .profile, etc.) to set the location where the virtual environments should live:
+
+```
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/Devel
+source /usr/local/bin/virtualenvwrapper.sh
+```
+
+After editing it, reload the startup file (e.g., run `source ~/.bashrc`) and create a python environment:
+
+```
+$ mkvirtualenv venv_py 
+$ workon venv_py
+```
+
+#### Setting up the environment
+
+Once the python environment was configured, run the following procedure to install all the required packages
+```setup
+(venv_py)$ git clone https://github.com/ahestevenz/gamma-ray-detection
+(venv_py)$ cd gamma-ray-detection
+(venv_py)$ pip install -r requirements.txt
+```
 
 ### Python scripts
 
