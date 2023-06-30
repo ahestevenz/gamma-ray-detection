@@ -1,10 +1,12 @@
 ## Gamma Ray Detection
 
-**gamma-ray-detection** is a project about gamma-ray detection which detects the high energy values when a CMOS sensor and a 10x10 matrix of collimated scintillator crystals are exposed to a radioactive source that emits gamma-ray beams. The camera and the scintillator are inside of a light-trap black box (gamma camera).
+**gamma-ray-detection** detects the high energy values when a CMOS sensor and a 10x10 matrix of collimated scintillator crystals are exposed to a radioactive source that emits gamma-ray beams. The camera and the scintillator are inside of a light-trap black box (gamma camera).
 
 ### Python classes
 
-Two python classes have been developed: _ImageProcessing_ and _GammaDetection_. First one processes the features of the image (filtering, canny and segmentation) to get the calibration parameters, which determine the scintillator dimension. The second class calculates the values of the superpixels in the 10x10 matrix and determinates the centroid. The superpixel size depends on the focal distance lens and sensor size of the camera.
+Two python classes have been developed: 
+* _ImageProcessing_: processes the features of the image (filtering, canny and segmentation) to get the calibration parameters, which determine the scintillator dimension.
+* _GammaDetection_: calculates the values of the superpixels in the 10x10 matrix and determinates the centroid. The superpixel size depends on the focal distance lens and sensor size of the camera.
 
 
 ### Python scripts
@@ -51,7 +53,7 @@ Corrected Shape
 |:---:|:---:|:---:|
 | Edge Detection | Mask | Grid |
 
-After that the calculation of the superpixel (10x10 crystals matrix) is done with the _getCentroids.py_ script. Here, images with following features are used:
+Then superpixels (10x10 crystals matrix) are carried out by the _getCentroids.py_ script. Here, images with following features are used:
 
 * Light: from radioactive source
 * Exposure time: 6 minutes
@@ -83,7 +85,7 @@ optional arguments:
 ```
 ### Results
 
-The results of the last script is a cualitative _pcolor_ graph with the grid of superpixels as follows,
+The results from _getCentroids.py_ is a cualitative _pcolor_ graph with the grid of superpixels, as we can observe below,
 
 * Essay 1
 
